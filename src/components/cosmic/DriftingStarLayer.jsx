@@ -8,16 +8,16 @@ export default function DriftingStarLayer() {
     const arr = [];
     for (let i = 0; i < starCount; i++) {
       // Half drift Y, half drift X
-      const isX = Math.random() > 0.5;
+      const isX = (i % 2) === 0;
       arr.push({
         id: i,
-        top: Math.random() * 100 + '%',
-        left: Math.random() * 100 + '%',
-        size: Math.random() * 2 + 1 + 'px',
+        top: ((i * 13) % 100) + '%',
+        left: ((i * 29) % 100) + '%',
+        size: (((i * 7) % 20) / 10 + 1) + 'px',
         animationClass: isX ? 'animate-[driftX_40s_ease-in-out_infinite]' : 'animate-[driftY_40s_ease-in-out_infinite]',
-        delay: Math.random() * -40 + 's',
-        duration: Math.random() * 40 + 40 + 's',
-        opacity: Math.random() * 0.4 + 0.2,
+        delay: -1 * ((i * 31) % 40) + 's',
+        duration: ((i * 17) % 40) + 40 + 's',
+        opacity: (((i * 11) % 40) / 100) + 0.2,
       });
     }
     return arr;

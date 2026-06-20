@@ -31,7 +31,7 @@ export default function IdeaGenerationForm({ sourceProblemIds, onSubmit, onCance
     if (!sourceProblems.length) return;
 
     // Averages across source problems
-    let sumPain = 0, sumWtp = 0, sumPeople = 0, sumBuild = 0, sumDemandScore = 0;
+    let sumPain = 0, sumBuild = 0, sumDemandScore = 0;
     
     // Frequency heuristic: take the max frequency weight among sources
     const freqWeights = { "Daily": 100, "Weekly": 70, "Monthly": 40, "Rarely": 15, "One-off": 5 };
@@ -40,8 +40,6 @@ export default function IdeaGenerationForm({ sourceProblemIds, onSubmit, onCance
 
     sourceProblems.forEach(p => {
       sumPain += p.painLevel;
-      sumWtp += p.willingnessToPay;
-      sumPeople += p.peopleAffected;
       sumBuild += p.canIBuild;
       
       const demand = computeDemandScore(p.willingnessToPay, p.peopleAffected, p.marketSizeEstimate);

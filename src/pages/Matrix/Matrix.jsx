@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useData } from '../../context/DataContext';
 import { computeDemandScore } from '../../lib/scoring';
-import { cn } from '../../lib/utils';
 import EmptyState from '../../components/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { StarSystemCell } from '../../components/cosmic';

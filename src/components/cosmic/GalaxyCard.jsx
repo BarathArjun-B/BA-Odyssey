@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import NeonBorder from './NeonBorder';
 
-export default function GalaxyCard({ idea, children, index = 0 }) {
+export default function GalaxyCard({ children, index = 0 }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}

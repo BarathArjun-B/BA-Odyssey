@@ -10,9 +10,9 @@ export default function StarFieldLayer() {
   const starShadows = useMemo(() => {
     let shadows = [];
     for (let i = 0; i < starCount; i++) {
-      const x = Math.floor(Math.random() * 100);
-      const y = Math.floor(Math.random() * 100);
-      const alpha = (Math.random() * 0.5 + 0.1).toFixed(2);
+      const x = (i * 137) % 100;
+      const y = (i * 93) % 100;
+      const alpha = (((i * 17) % 50) / 100 + 0.1).toFixed(2);
       shadows.push(`${x}vw ${y}vh rgba(255, 255, 255, ${alpha})`);
     }
     return shadows.join(', ');

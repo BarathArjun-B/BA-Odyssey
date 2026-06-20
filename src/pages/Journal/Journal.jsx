@@ -16,19 +16,19 @@ export default function Journal() {
   const navigate = useNavigate();
 
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(() => {
+    return !!location.state?.autoOpen;
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [selectedIds, setSelectedIds] = useState(new Set());
 
-  // Handle auto-open from Discover page
+  // Clean up state so refresh doesn't reopen
   useEffect(() => {
     if (location.state?.autoOpen) {
-      setIsModalOpen(true);
-      // Clean up state so refresh doesn't reopen
       window.history.replaceState({}, document.title);
     }
-  }, [location]);
+  }, [location.state]);
 
   // Extract all unique tags
   const allTags = useMemo(() => {
@@ -199,7 +199,7 @@ export default function Journal() {
               </tr>
             </thead>
             <tbody>
-              {filteredProblems.map((p, idx) => {
+              {filteredProblems.map((p) => {
                 const numericId = data.problems.length - data.problems.findIndex(x => x.id === p.id);
                 const isSelected = selectedIds.has(p.id);
                 return (

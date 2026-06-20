@@ -4,19 +4,6 @@
 
 @layer base {
   :root {
-    /* === BACKGROUNDS (Keep existing, no change) === */
-    --bg-deep-space: #000000;
-    --bg-midnight: #030303;
-    --bg-secondary: #0A0A0A;
-    --bg-tertiary: #050505;
-
-    /* === PRIMARY ACCENTS (REFINED - Muted, Sophisticated) === */
-    --accent-primary: #7C6BA8;           /* Main UI accent - desaturated violet */
-    --accent-primary-light: #9B8FBD;     /* Hover state - slightly brighter */
-    --accent-primary-dark: #5E4A7D;      /* Active state - slightly darker */
-
-    /* === SECONDARY ACCENTS (REFINED - Not neon) === */
-    --accent-secondary: #9370A8;         /* Soft mauve - replaced bright magenta */
     --accent-secondary-light: #A883BA;   /* Hover */
     --accent-secondary-dark: #7A5A8E;    /* Active */
 

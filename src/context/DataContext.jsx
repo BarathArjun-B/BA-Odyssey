@@ -1,14 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import { loadData, saveData } from '../lib/storage.js';
 
 const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    setData(loadData());
-  }, []);
+  const [data, setData] = useState(() => loadData());
 
   useEffect(() => {
     if (data) {

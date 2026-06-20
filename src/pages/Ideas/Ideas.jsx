@@ -7,7 +7,6 @@ import SpecimenCard from '../../components/SpecimenCard';
 import EmptyState from '../../components/EmptyState';
 import { GalaxyCard } from '../../components/cosmic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export default function Ideas() {
@@ -15,17 +14,24 @@ export default function Ideas() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isGenModalOpen, setIsGenModalOpen] = useState(false);
-  const [sourceIds, setSourceIds] = useState([]);
+  const [sourceIds] = useState(() => {
+    if (location.state?.autoOpen && location.state?.sourceProblemIds) {
+      return location.state.sourceProblemIds;
+    }
+    return [];
+  });
+  
+  const [isGenModalOpen, setIsGenModalOpen] = useState(() => {
+    return !!(location.state?.autoOpen && location.state?.sourceProblemIds);
+  });
+
   const [viewedIdea, setViewedIdea] = useState(null);
 
   useEffect(() => {
-    if (location.state?.autoOpen && location.state?.sourceProblemIds) {
-      setSourceIds(location.state.sourceProblemIds);
-      setIsGenModalOpen(true);
+    if (location.state?.autoOpen) {
       window.history.replaceState({}, document.title);
     }
-  }, [location]);
+  }, [location.state]);
 
   // Sort ideas by startup potential score descending
   const sortedIdeas = useMemo(() => {

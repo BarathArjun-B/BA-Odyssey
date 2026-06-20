@@ -1,39 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import ScoreSlider from '../../components/ScoreSlider';
 import TagInput from '../../components/TagInput';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 const FREQUENCIES = ["Daily", "Weekly", "Monthly", "Rarely", "One-off"];
 const MARKET_SIZES = ["Niche", "Medium", "Large", "Massive"];
 
 export default function NewEntryForm({ onSubmit, initialPrompt = '', initialData = null }) {
   const { addProblem, updateProblem } = useData();
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(!!initialData);
 
   const [formData, setFormData] = useState({
-    problem: initialPrompt,
-    whoFaces: '',
-    frequency: 'Daily',
-    currentSolution: '',
-    whyBad: '',
-    painLevel: 5,
-    peopleAffected: 5,
-    willingnessToPay: 5,
-    canIBuild: 5,
-    marketSizeEstimate: 'Medium',
-    marketSizeNote: '',
-    myIdea: '',
-    notes: '',
-    tags: []
+    problem: initialData?.problem || initialPrompt,
+    whoFaces: initialData?.whoFaces || '',
+    frequency: initialData?.frequency || 'Daily',
+    currentSolution: initialData?.currentSolution || '',
+    whyBad: initialData?.whyBad || '',
+    painLevel: initialData?.painLevel ?? 5,
+    peopleAffected: initialData?.peopleAffected ?? 5,
+    willingnessToPay: initialData?.willingnessToPay ?? 5,
+    canIBuild: initialData?.canIBuild ?? 5,
+    marketSizeEstimate: initialData?.marketSizeEstimate || 'Medium',
+    marketSizeNote: initialData?.marketSizeNote || '',
+    myIdea: initialData?.myIdea || '',
+    notes: initialData?.notes || '',
+    tags: initialData?.tags || []
   });
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(prev => ({ ...prev, ...initialData }));
-      setShowAdvanced(true);
-    }
-  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

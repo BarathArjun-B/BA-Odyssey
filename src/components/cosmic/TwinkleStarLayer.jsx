@@ -9,11 +9,11 @@ export default function TwinkleStarLayer() {
     for (let i = 0; i < starCount; i++) {
       arr.push({
         id: i,
-        top: Math.random() * 100 + '%',
-        left: Math.random() * 100 + '%',
-        size: Math.random() * 1.5 + 0.5 + 'px',
-        delay: Math.random() * 5 + 's',
-        duration: Math.random() * 3 + 3 + 's',
+        top: ((i * 47) % 100) + '%',
+        left: ((i * 73) % 100) + '%',
+        size: (((i * 13) % 15) / 10 + 0.5) + 'px',
+        delay: ((i * 19) % 50) / 10 + 's',
+        duration: ((i * 23) % 30) / 10 + 3 + 's',
       });
     }
     return arr;

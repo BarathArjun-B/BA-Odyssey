@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { cn } from '../lib/utils';
 
 export default function ScoreSlider({ 
@@ -9,7 +8,6 @@ export default function ScoreSlider({
   max = 10, 
   leftLabel, 
   rightLabel,
-  colorClass = "",
   description
 }) {
   return (

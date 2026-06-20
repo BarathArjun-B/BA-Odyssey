@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../context/ThemeContext';
-import { useData } from '../context/DataContext';
 import { CosmicBackground, MoonElement } from '../components/cosmic';
 
 const NAV_ITEMS = [
@@ -27,7 +26,7 @@ const SECONDARY_NAV = [
 
 export default function AppShell() {
   const { theme, setTheme } = useTheme();
-  const { data } = useData();
+
   const navigate = useNavigate();
 
   const handleThemeToggle = () => {

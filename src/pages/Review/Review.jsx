@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { computeReview, getWeekRange } from '../../lib/reviewEngine';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
@@ -13,21 +13,18 @@ export default function Review() {
   const { start, end } = getWeekRange(targetDateStr);
   const weekOfStr = start.toISOString().split('T')[0];
 
-  const reviewData = useMemo(() => computeReview(data.problems, data.ideas, targetDateStr), [data, targetDateStr]);
-  const savedReview = useMemo(() => data.weeklyReviews.find(r => r.weekOf === weekOfStr), [data.weeklyReviews, weekOfStr]);
+  const reviewData = computeReview(data.problems, data.ideas, targetDateStr);
+  const savedReview = data.weeklyReviews.find(r => r.weekOf === weekOfStr);
 
-  const [reflection, setReflection] = useState('');
+  const [reflection, setReflection] = useState(() => savedReview ? savedReview.reflection : '');
   const [isSaved, setIsSaved] = useState(false);
+  const [prevWeekOfStr, setPrevWeekOfStr] = useState(weekOfStr);
 
-  // Sync state when week changes
-  useMemo(() => {
-    if (savedReview) {
-      setReflection(savedReview.reflection);
-    } else {
-      setReflection('');
-    }
+  if (weekOfStr !== prevWeekOfStr) {
+    setPrevWeekOfStr(weekOfStr);
+    setReflection(savedReview ? savedReview.reflection : '');
     setIsSaved(false);
-  }, [savedReview]);
+  }
 
   const handlePrevWeek = () => {
     const d = new Date(currentDate);
@@ -93,7 +90,7 @@ export default function Review() {
           <h3 className="font-catalogue text-display-md border-b pb-2" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-glass)' }}>Top Recurring</h3>
           {reviewData.topRecurring.length === 0 ? <p className="text-muted text-body-sm">No data.</p> : (
             <ul className="flex flex-col gap-4">
-              {reviewData.topRecurring.map((g, idx) => (
+              {reviewData.topRecurring.map((g) => (
                 <li key={g.key} className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-body-sm" style={{ color: 'var(--text-primary)' }}>{g.key}</span>

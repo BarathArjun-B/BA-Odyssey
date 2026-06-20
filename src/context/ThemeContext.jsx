@@ -1,17 +1,12 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect } from 'react';
 import { useData } from './DataContext';
 
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const { data, updateSettings } = useData();
-  const [theme, setTheme] = useState(data?.settings?.theme || 'system');
-
-  useEffect(() => {
-    if (data?.settings?.theme) {
-      setTheme(data.settings.theme);
-    }
-  }, [data?.settings?.theme]);
+  const theme = data?.settings?.theme || 'system';
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -26,7 +21,6 @@ export function ThemeProvider({ children }) {
   }, [theme]);
 
   const setThemePref = (newTheme) => {
-    setTheme(newTheme);
     updateSettings({ theme: newTheme });
   };
 

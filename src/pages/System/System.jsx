@@ -15,7 +15,6 @@ export default function System() {
   const { data, toggleOSItem } = useData();
 
   const todayStr = new Date().toISOString().split('T')[0];
-  const todayLog = data.operatingSystem.dailyLogs.find(l => l.date === todayStr) || {};
   const hasProblemsToday = data.problems.some(p => p.date === todayStr);
 
   // Generate last 7 days strings

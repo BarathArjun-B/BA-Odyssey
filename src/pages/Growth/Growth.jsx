@@ -83,7 +83,7 @@ export default function Growth() {
   const renderContent = () => {
     const items = data.growth[activeTab];
     if (items.length === 0) {
-      let msg = '';
+      let msg;
       if (activeTab === 'books') msg = 'No books logged yet — add the last business book you actually finished.';
       else if (activeTab === 'concepts') msg = 'No concepts logged yet.';
       else if (activeTab === 'networking') msg = 'No networking goals yet.';

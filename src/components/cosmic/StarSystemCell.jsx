@@ -25,7 +25,7 @@ export default function StarSystemCell({ item, style, onClick }) {
           background: `radial-gradient(circle, rgba(${color}, 0.8) 0%, rgba(${color}, 0) 70%)`,
           boxShadow: `0 0 ${glowSize}px rgba(${color}, 0.6), inset 0 0 ${glowSize/2}px rgba(${color}, 0.4)`,
           animation: 'twinkle 4s ease-in-out infinite alternate',
-          animationDelay: `${Math.random() * -4}s`
+          animationDelay: `${((score * 1.37) % 4) * -1}s`
         }}
       />
       

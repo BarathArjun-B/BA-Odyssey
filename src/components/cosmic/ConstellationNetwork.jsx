@@ -14,7 +14,7 @@ export default function ConstellationNetwork({ problems = [], ideas = [] }) {
     // Distribute in a circle-ish layout
     return combined.map((item, idx) => {
       const angle = (idx / combined.length) * Math.PI * 2;
-      const radius = 35 + Math.random() * 15; // 35-50%
+      const radius = 35 + ((idx * 17) % 15); // 35-50%
       const x = 50 + Math.cos(angle) * radius;
       const y = 50 + Math.sin(angle) * radius;
       return { ...item, x, y };

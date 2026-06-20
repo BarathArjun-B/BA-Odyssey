@@ -2,14 +2,14 @@ import { useData } from '../../context/DataContext';
 import { getFounderScore, calculateStreak } from '../../lib/scoring';
 import { computeReview } from '../../lib/reviewEngine';
 import { getRandomPrompt } from '../../lib/prompts';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatTile from '../../components/StatTile';
 import ProgressRing from '../../components/ProgressRing';
 import Sparkline from '../../components/Sparkline';
 import { AstronautCharacter, ConstellationNetwork, CosmicGlow } from '../../components/cosmic';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronRight, Check, SquareCheck } from 'lucide-react';
+import { ArrowRight, ChevronRight, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 function getGreeting(name) {
@@ -23,11 +23,7 @@ function getGreeting(name) {
 export default function Dashboard() {
   const { data, toggleOSItem } = useData();
   const navigate = useNavigate();
-  const [prompt, setPrompt] = useState('');
-
-  useEffect(() => {
-    setPrompt(getRandomPrompt());
-  }, []);
+  const [prompt] = useState(() => getRandomPrompt());
 
   const score = useMemo(() => getFounderScore(data), [data]);
   const streak = useMemo(() => calculateStreak(data.problems), [data.problems]);
@@ -41,7 +37,8 @@ export default function Dashboard() {
     let cur = Math.max(score - 15, 0);
     for(let i=0; i<6; i++) {
       arr.push({ val: cur });
-      cur += Math.floor(Math.random() * 4);
+      const pseudoRandom = ((score + i) * 17) % 4;
+      cur += pseudoRandom;
     }
     arr.push({ val: score });
     return arr;
