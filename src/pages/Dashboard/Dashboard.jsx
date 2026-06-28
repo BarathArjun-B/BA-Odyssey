@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import StatTile from '../../components/StatTile';
 import ProgressRing from '../../components/ProgressRing';
 import Sparkline from '../../components/Sparkline';
-import { AstronautCharacter, ConstellationNetwork, CosmicGlow } from '../../components/cosmic';
+import { AstronautCharacter, ConstellationNetwork } from '../../components/cosmic';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -107,24 +107,22 @@ export default function Dashboard() {
 
       {/* Founder Score Band */}
       {!isDayOne && (
-        <CosmicGlow color="gold">
-          <div className="glass-panel p-6 flex items-center justify-between cosmic-hover cursor-pointer web-texture">
-            <div className="flex flex-col">
-              <span className="text-body-sm text-muted mb-1">Founder Score</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-display-xl leading-none" style={{ color: 'var(--status-achievement-gold)' }}>{score}</span>
-                <span className="text-mono-id text-muted">/1000</span>
-              </div>
-            </div>
-            <div className="flex-1 max-w-xs mx-8 hidden md:block opacity-60">
-              <Sparkline data={sparklineData} dataKey="val" color="var(--status-achievement-gold)" />
-            </div>
-            <div className="flex items-center gap-2 font-medium text-body-sm" style={{ color: 'var(--accent-primary)' }}>
-              View breakdown
-              <ChevronRight className="w-4 h-4" />
+        <div className="founder-score-card p-6 flex items-center justify-between cursor-pointer web-texture">
+          <div className="flex flex-col">
+            <span className="text-body-sm text-muted mb-1" style={{ letterSpacing: '0.05em' }}>Founder Score</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-display-xl leading-none" style={{ color: 'var(--status-achievement-gold)', textShadow: '0 0 10px rgba(232, 179, 57, 0.2)' }}>{score}</span>
+              <span className="text-mono-id text-muted opacity-70">/1000</span>
             </div>
           </div>
-        </CosmicGlow>
+          <div className="flex-1 max-w-xs mx-8 hidden md:block opacity-40">
+            <Sparkline data={sparklineData} dataKey="val" color="var(--status-achievement-gold)" />
+          </div>
+          <div className="flex items-center gap-2 font-medium text-body-sm transition-colors" style={{ color: 'rgba(232, 179, 57, 0.8)' }}>
+            View breakdown
+            <ChevronRight className="w-4 h-4" />
+          </div>
+        </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

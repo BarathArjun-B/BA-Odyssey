@@ -100,29 +100,29 @@ export default function Journal() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between glass-panel p-2">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mt-2 mb-4">
         <div className="flex items-center gap-4 w-full sm:w-auto flex-1">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="premium-search-container max-w-md w-full">
+            <Search className="w-4 h-4 absolute left-4 pointer-events-none" style={{ color: 'rgba(255, 255, 255, 0.4)' }} />
             <input 
               type="text"
               placeholder="Search problems..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg pl-9 pr-3 py-2 text-body-sm cosmic-focus outline-none"
+              className="premium-search-input"
             />
           </div>
           <select 
             value={selectedTag}
             onChange={e => setSelectedTag(e.target.value)}
-            className="rounded-lg px-3 py-2 text-body-sm cosmic-focus outline-none max-w-[150px]"
+            className="premium-filter-select max-w-[160px]"
           >
             <option value="">All Tags</option>
             {allTags.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
 
-        <div className="hidden sm:flex items-center rounded-lg p-1 shrink-0" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
+        <div className="hidden sm:flex items-center rounded-xl p-1 shrink-0" style={{ background: 'rgba(15, 15, 15, 0.4)', border: '1px solid rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(12px)' }}>
           <button 
             onClick={() => setViewMode('grid')}
             className={cn("p-1.5 rounded-md transition-colors", viewMode === 'grid' ? "text-primary" : "text-muted hover:text-primary")}

@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, BookOpen, Compass, Lightbulb, 
   Grid, CalendarDays, TrendingUp, SquareCheck, 
-  Settings, Info, Plus, Moon, Sun, Laptop
+  Settings, Info, Plus, Moon, Sun, Laptop, GraduationCap
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../context/ThemeContext';
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { path: '/review', label: 'Review', icon: CalendarDays },
   { path: '/growth', label: 'Growth', icon: TrendingUp },
   { path: '/system', label: 'System', icon: SquareCheck },
+  { path: '/academy', label: 'Academy', icon: GraduationCap },
 ];
 
 const SECONDARY_NAV = [
