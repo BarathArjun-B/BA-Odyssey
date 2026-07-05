@@ -6,7 +6,7 @@ BA Odyssey is a personal Founder Operating System designed to help ambitious stu
 
 Instead of chasing startup ideas, BA Odyssey helps users become **problem collectors** — because great companies are built by solving meaningful problems.
 
----
+----
 
 ## 🌌 Philosophy
 
