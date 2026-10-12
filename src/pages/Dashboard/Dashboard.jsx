@@ -4,12 +4,13 @@ import { computeReview } from '../../lib/reviewEngine';
 import { getRandomPrompt } from '../../lib/prompts';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../../components/Modal';
 import StatTile from '../../components/StatTile';
 import ProgressRing from '../../components/ProgressRing';
 import Sparkline from '../../components/Sparkline';
 import { AstronautCharacter, ConstellationNetwork } from '../../components/cosmic';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronRight, Check } from 'lucide-react';
+import { ArrowRight, ChevronRight, Check, Award, Flame, Compass, Target } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 function getGreeting(name) {
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const { data, toggleOSItem } = useData();
   const navigate = useNavigate();
   const [prompt] = useState(() => getRandomPrompt());
+  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
   const score = useMemo(() => getFounderScore(data), [data]);
   const streak = useMemo(() => calculateStreak(data.problems), [data.problems]);
@@ -107,7 +109,10 @@ export default function Dashboard() {
 
       {/* Founder Score Band */}
       {!isDayOne && (
-        <div className="founder-score-card p-6 flex items-center justify-between cursor-pointer web-texture">
+        <div 
+          onClick={() => setIsScoreModalOpen(true)}
+          className="founder-score-card p-6 flex items-center justify-between cursor-pointer web-texture"
+        >
           <div className="flex flex-col">
             <span className="text-body-sm text-muted mb-1" style={{ letterSpacing: '0.05em' }}>Founder Score</span>
             <div className="flex items-baseline gap-2">
@@ -206,8 +211,7 @@ export default function Dashboard() {
                     key={item.id}
                     disabled={isAutoProblem}
                     onClick={() => toggleOSItem(todayStr, item.id, !finalChecked)}
-                    className="flex items-center gap-3 p-2 rounded transition-colors text-left group"
-                    style={{ ':hover': { background: 'rgba(255,255,255,0.04)' } }}
+                    className="flex items-center gap-3 p-2 rounded transition-colors text-left group hover:bg-white/[0.04]"
                   >
                     <div className={cn(
                       "w-5 h-5 rounded flex items-center justify-center border transition-colors",
@@ -230,6 +234,74 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Score Breakdown Modal */}
+      <Modal
+        isOpen={isScoreModalOpen}
+        onClose={() => setIsScoreModalOpen(false)}
+        title="Founder Score Breakdown"
+      >
+        <div className="flex flex-col gap-6 py-2">
+          <div className="flex items-center justify-between p-4 rounded-xl border border-amber-500/20 bg-amber-500/5">
+            <div>
+              <span className="text-caption font-label uppercase tracking-widest text-muted block mb-1">Current Score</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-display-xl font-bold text-amber-400">{score}</span>
+                <span className="text-mono-id text-muted">/ 1,000 pts</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-caption font-label uppercase tracking-widest text-muted block mb-1">Rank</span>
+              <span className="px-3 py-1 rounded-full text-xs font-mono border border-amber-500/30 text-amber-300 bg-amber-500/10">
+                {score >= 600 ? 'Galaxy Pioneer' : score >= 300 ? 'Orbital Commander' : score >= 100 ? 'Constellation Mapper' : 'Stargazer'}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-[var(--border-glass)] flex items-start gap-3">
+              <Compass className="w-5 h-5 text-violet-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-medium text-body-sm text-primary">Problem Velocity</div>
+                <div className="text-xs text-muted mt-0.5">{data.problems.length} problems captured</div>
+                <div className="text-xs font-mono text-violet-400 mt-1">Goal: {goal}</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-[var(--border-glass)] flex items-start gap-3">
+              <Flame className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-medium text-body-sm text-primary">Logging Streak</div>
+                <div className="text-xs text-muted mt-0.5">{streak} consecutive active days</div>
+                <div className="text-xs font-mono text-emerald-400 mt-1">{streak > 0 ? 'Active momentum' : 'Start streak today'}</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-[var(--border-glass)] flex items-start gap-3">
+              <Target className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-medium text-body-sm text-primary">Opportunity Synthesis</div>
+                <div className="text-xs text-muted mt-0.5">{data.ideas.length} startup ideas generated</div>
+                <div className="text-xs font-mono text-cyan-400 mt-1">Higher potential adds bonus</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-[var(--border-glass)] flex items-start gap-3">
+              <Award className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-medium text-body-sm text-primary">Operating System</div>
+                <div className="text-xs text-muted mt-0.5">{data.operatingSystem.dailyLogs.length} logged days</div>
+                <div className="text-xs font-mono text-amber-400 mt-1">Consistent daily habits</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white/[0.03] border border-[var(--border-glass)] text-body-sm text-muted">
+            <span className="font-medium text-primary block mb-1">How to reach 1,000 points:</span>
+            Log 1 problem daily to maintain your streak, generate ideas from high-pain entries, and maintain your 6 core habits in the Founder Operating System.
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
