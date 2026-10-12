@@ -3,6 +3,7 @@ import AppShell from './AppShell';
 
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Journal from '../pages/Journal/Journal';
+import Notes from '../pages/Notes/Notes';
 import Discover from '../pages/Discover/Discover';
 import Ideas from '../pages/Ideas/Ideas';
 import Matrix from '../pages/Matrix/Matrix';
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: 'journal', element: <Journal /> },
+      { path: 'notes', element: <Notes /> },
       { path: 'discover', element: <Discover /> },
       { path: 'ideas', element: <Ideas /> },
       { path: 'matrix', element: <Matrix /> },
