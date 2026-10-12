@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useData } from '../../context/DataContext';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import EmptyState from '../../components/EmptyState';
 import Modal from '../../components/Modal';
 
@@ -12,7 +12,7 @@ const TABS = [
 ];
 
 export default function Growth() {
-  const { data, addGrowthItem } = useData();
+  const { data, addGrowthItem, updateGrowthItem, deleteGrowthItem } = useData();
   const [activeTab, setActiveTab] = useState('books');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
@@ -100,50 +100,81 @@ export default function Growth() {
 
     return (
       <div className="flex flex-col gap-4">
-        {items.map((item, idx) => (
-          <div key={item.id || idx} className="glass-panel p-6 cosmic-hover">
-            {activeTab === 'books' && (
-              <>
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.title}</h4>
-                  <span className="text-caption text-muted">{item.dateFinished}</span>
-                </div>
-                <p className="text-body-sm text-muted mb-2">by {item.author}</p>
-                <p className="text-body-md italic border-l-2 pl-3" style={{ color: 'var(--text-primary)', borderColor: 'var(--accent-primary)' }}>"{item.takeaway}"</p>
-              </>
-            )}
-            {activeTab === 'concepts' && (
-              <>
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.concept}</h4>
-                  <span className="text-caption text-muted">{item.source}</span>
-                </div>
-                <p className="text-body-md" style={{ color: 'var(--text-primary)' }}>{item.explanation}</p>
-              </>
-            )}
-            {activeTab === 'networking' && (
-              <>
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.goal}</h4>
-                  <span className="text-caption px-2 py-1 rounded font-label text-muted" style={{ background: 'var(--border-glass)' }}>{item.status || 'Not started'}</span>
-                </div>
-                <p className="text-body-sm text-muted">Target: {item.targetDate}</p>
-              </>
-            )}
-            {activeTab === 'skillsExperiments' && (
-              <>
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-caption px-2 py-1 rounded font-label uppercase" style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-primary)' }}>{item.type || 'Skill'}</span>
-                    <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.title}</h4>
-                  </div>
-                  <span className="text-caption px-2 py-1 rounded font-label text-muted" style={{ background: 'var(--border-glass)' }}>{item.status || 'Not started'}</span>
-                </div>
-                <p className="text-body-md" style={{ color: 'var(--text-primary)' }}>{item.description}</p>
-              </>
-            )}
-          </div>
-        ))}
+        {items.map((item, idx) => {
+          const itemKey = item.id || item.title || item.concept || item.goal || `item_${idx}`;
+          return (
+            <div key={itemKey} className="glass-panel p-6 cosmic-hover flex flex-col justify-between">
+              <div>
+                {activeTab === 'books' && (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.title}</h4>
+                      <span className="text-caption text-muted">{item.dateFinished}</span>
+                    </div>
+                    <p className="text-body-sm text-muted mb-2">by {item.author}</p>
+                    <p className="text-body-md italic border-l-2 pl-3" style={{ color: 'var(--text-primary)', borderColor: 'var(--accent-primary)' }}>"{item.takeaway}"</p>
+                  </>
+                )}
+                {activeTab === 'concepts' && (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.concept}</h4>
+                      <span className="text-caption text-muted">{item.source}</span>
+                    </div>
+                    <p className="text-body-md" style={{ color: 'var(--text-primary)' }}>{item.explanation}</p>
+                  </>
+                )}
+                {activeTab === 'networking' && (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.goal}</h4>
+                      <span className="text-caption px-2 py-1 rounded font-label text-muted" style={{ background: 'var(--border-glass)' }}>{item.status || 'Not started'}</span>
+                    </div>
+                    <p className="text-body-sm text-muted">Target: {item.targetDate}</p>
+                  </>
+                )}
+                {activeTab === 'skillsExperiments' && (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-caption px-2 py-1 rounded font-label uppercase" style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-primary)' }}>{item.type || 'Skill'}</span>
+                        <h4 className="text-body-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.title}</h4>
+                      </div>
+                      <span className="text-caption px-2 py-1 rounded font-label text-muted" style={{ background: 'var(--border-glass)' }}>{item.status || 'Not started'}</span>
+                    </div>
+                    <p className="text-body-md" style={{ color: 'var(--text-primary)' }}>{item.description}</p>
+                  </>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-3 mt-4 border-t border-[var(--border-glass)]">
+                {(activeTab === 'networking' || activeTab === 'skillsExperiments') ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextStatus = item.status === 'Done' ? 'In progress' : 'Done';
+                      updateGrowthItem(activeTab, itemKey, { status: nextStatus });
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-mono transition-colors ${
+                      item.status === 'Done' ? 'text-emerald-400' : 'text-muted hover:text-emerald-400'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {item.status === 'Done' ? 'Completed' : 'Mark Done'}
+                  </button>
+                ) : <div />}
+                <button
+                  type="button"
+                  onClick={() => deleteGrowthItem(activeTab, itemKey)}
+                  className="p-1.5 rounded text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                  title="Delete entry"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
