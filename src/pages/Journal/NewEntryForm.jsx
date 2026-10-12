@@ -261,7 +261,7 @@ export default function NewEntryForm({ onSubmit, initialPrompt = '', initialData
           disabled={!formData.problem || !formData.whoFaces}
           className="btn-primary px-8 disabled:opacity-50"
         >
-          Save Entry
+          {initialData?.id ? 'Update Problem' : 'Log Problem'}
         </button>
       </div>
     </form>
