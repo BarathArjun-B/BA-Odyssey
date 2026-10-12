@@ -45,6 +45,21 @@ Track:
 
 ---
 
+### 📝 Personal Notes
+
+Capture founder reflections, meeting minutes, tactical observations, and quick thoughts with real MongoDB persistence.
+
+Features:
+
+* **Real MongoDB Persistence**: Documents stored in the `notes` collection in `ba_odyssey`.
+* **Full CRUD**: Create, read, update, and delete notes.
+* **Pinning**: Pin critical notes to the top of the interface.
+* **Tagging & Filtering**: Categorize notes with custom tags and filter by active tags.
+* **Instant Search**: Search across titles and contents with safe escaping.
+* **Owner Isolation**: Strict user-level authorization ensuring notes remain private to each founder.
+
+---
+
 ### 🌠 Discovery Assistant
 
 Guided prompts help uncover hidden opportunities.
@@ -133,27 +148,21 @@ The interface is designed to feel like:
 ## 🛠 Tech Stack
 
 ### Frontend
+* React 19 & Vite
+* Tailwind CSS & Framer Motion
+* Axios (REST API Client)
+* Lucide React Icons
 
-* React
-* Vite
-* Tailwind CSS
-* Framer Motion
+### Backend
+* Node.js & Express 4 / TypeScript
+* Mongoose ODM
+* JWT Authentication & Cookie Parser
+* Express Validator & Helmet Security
+* Swagger / OpenAPI 3.0 Documentation
 
-### Storage
-
-* Browser Local Storage
-
-### Deployment
-
-* Vercel
-* Netlify
-* GitHub Pages
-
-No backend required.
-
-No database required.
-
-Fast and lightweight.
+### Database & Storage
+* MongoDB (`ba_odyssey`) for Notes and core data
+* Browser Local Storage for offline cache and migration source
 
 ---
 
