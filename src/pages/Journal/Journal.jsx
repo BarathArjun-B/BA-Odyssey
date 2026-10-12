@@ -7,11 +7,11 @@ import SpecimenCard from '../../components/SpecimenCard';
 import EmptyState from '../../components/EmptyState';
 import { PlanetCard } from '../../components/cosmic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, LayoutGrid, List, Plus, ArrowRight } from 'lucide-react';
+import { Search, LayoutGrid, List, Plus, ArrowRight, Edit2, Trash2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export default function Journal() {
-  const { data } = useData();
+  const { data, deleteProblem } = useData();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,6 +19,8 @@ export default function Journal() {
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return !!location.state?.autoOpen;
   });
+  const [editingProblem, setEditingProblem] = useState(null);
+  const [deletingProblem, setDeletingProblem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -178,6 +180,31 @@ export default function Journal() {
                       </div>
                       <div>Who: <span style={{ color: 'var(--text-primary)' }}>{p.whoFaces}</span></div>
                     </div>
+                    <div className="flex items-center justify-end gap-1 pt-3 mt-3 border-t border-[var(--border-glass)]">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProblem(p);
+                          setIsModalOpen(true);
+                        }}
+                        className="p-1.5 rounded-lg text-muted hover:text-primary hover:bg-white/5 transition-colors"
+                        title="Edit problem"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingProblem(p);
+                        }}
+                        className="p-1.5 rounded-lg text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        title="Delete problem"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </SpecimenCard>
                 </PlanetCard>
               );
@@ -196,6 +223,7 @@ export default function Journal() {
                 <th className="p-4 font-label uppercase text-[10px] tracking-widest text-muted">Pain</th>
                 <th className="p-4 font-label uppercase text-[10px] tracking-widest text-muted">WTP</th>
                 <th className="p-4 font-label uppercase text-[10px] tracking-widest text-muted">Tags</th>
+                <th className="p-4 font-label uppercase text-[10px] tracking-widest text-muted text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -227,6 +255,33 @@ export default function Journal() {
                         {p.tags?.length > 2 && <span className="text-[10px] text-muted">+{p.tags.length - 2}</span>}
                       </div>
                     </td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingProblem(p);
+                            setIsModalOpen(true);
+                          }}
+                          className="p-1.5 rounded hover:bg-white/5 text-muted hover:text-primary transition-colors"
+                          title="Edit problem"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeletingProblem(p);
+                          }}
+                          className="p-1.5 rounded hover:bg-red-500/10 text-muted hover:text-red-400 transition-colors"
+                          title="Delete problem"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -251,16 +306,65 @@ export default function Journal() {
         </div>
       )}
 
-      {/* New Entry Modal */}
+      {/* New / Edit Entry Modal */}
       <Modal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
-        title="Log a Problem"
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingProblem(null);
+        }}
+        title={editingProblem ? "Edit Problem" : "Log a Problem"}
       >
         <NewEntryForm 
           initialPrompt={location.state?.prompt || ''} 
-          onSubmit={() => setIsModalOpen(false)} 
+          initialData={editingProblem}
+          onSubmit={() => {
+            setIsModalOpen(false);
+            setEditingProblem(null);
+          }} 
         />
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={!!deletingProblem}
+        onClose={() => setDeletingProblem(null)}
+        title="Confirm Deletion"
+      >
+        {deletingProblem && (
+          <div className="flex flex-col gap-6 py-2">
+            <p className="text-body-md" style={{ color: 'var(--text-primary)' }}>
+              Are you sure you want to delete problem <strong className="text-red-400">"{deletingProblem.problem}"</strong>?
+            </p>
+            <p className="text-body-sm text-muted">
+              This action will remove it from your problem journal and recalculate your founder statistics. This cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-glass)]">
+              <button
+                type="button"
+                onClick={() => setDeletingProblem(null)}
+                className="px-4 py-2 rounded-lg text-body-sm text-muted hover:text-primary hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteProblem(deletingProblem.id);
+                  if (selectedIds.has(deletingProblem.id)) {
+                    const newSel = new Set(selectedIds);
+                    newSel.delete(deletingProblem.id);
+                    setSelectedIds(newSel);
+                  }
+                  setDeletingProblem(null);
+                }}
+                className="px-5 py-2 rounded-lg text-body-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-colors"
+              >
+                Delete Problem
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
