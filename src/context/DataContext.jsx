@@ -33,6 +33,13 @@ export function DataProvider({ children }) {
     }));
   };
 
+  const deleteProblem = (id) => {
+    setData(prev => ({
+      ...prev,
+      problems: prev.problems.filter(p => p.id !== id)
+    }));
+  };
+
   const addIdea = (idea) => {
     setData(prev => ({
       ...prev,
@@ -47,12 +54,42 @@ export function DataProvider({ children }) {
     }));
   };
 
+  const deleteIdea = (id) => {
+    setData(prev => ({
+      ...prev,
+      ideas: prev.ideas.filter(i => i.id !== id)
+    }));
+  };
+
   const addGrowthItem = (category, item) => {
     setData(prev => ({
       ...prev,
       growth: {
         ...prev.growth,
         [category]: [item, ...prev.growth[category]]
+      }
+    }));
+  };
+
+  const deleteGrowthItem = (category, itemId) => {
+    setData(prev => ({
+      ...prev,
+      growth: {
+        ...prev.growth,
+        [category]: (prev.growth[category] || []).filter(item => (item.id || item.title || item.concept || item.goal) !== itemId)
+      }
+    }));
+  };
+
+  const updateGrowthItem = (category, itemId, updates) => {
+    setData(prev => ({
+      ...prev,
+      growth: {
+        ...prev.growth,
+        [category]: (prev.growth[category] || []).map(item => {
+          const key = item.id || item.title || item.concept || item.goal;
+          return key === itemId ? { ...item, ...updates } : item;
+        })
       }
     }));
   };
@@ -101,9 +138,13 @@ export function DataProvider({ children }) {
       updateSettings,
       addProblem,
       updateProblem,
+      deleteProblem,
       addIdea,
       updateIdea,
+      deleteIdea,
       addGrowthItem,
+      updateGrowthItem,
+      deleteGrowthItem,
       toggleOSItem,
       saveWeeklyReview,
       forceReloadData
