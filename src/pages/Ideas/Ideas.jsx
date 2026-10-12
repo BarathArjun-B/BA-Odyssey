@@ -7,14 +7,15 @@ import SpecimenCard from '../../components/SpecimenCard';
 import EmptyState from '../../components/EmptyState';
 import { GalaxyCard } from '../../components/cosmic';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Trash2, HelpCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export default function Ideas() {
-  const { data } = useData();
+  const { data, updateIdea, deleteIdea } = useData();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [sourceIds] = useState(() => {
+  const [genSourceIds, setGenSourceIds] = useState(() => {
     if (location.state?.autoOpen && location.state?.sourceProblemIds) {
       return location.state.sourceProblemIds;
     }
@@ -26,6 +27,7 @@ export default function Ideas() {
   });
 
   const [viewedIdea, setViewedIdea] = useState(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   useEffect(() => {
     if (location.state?.autoOpen) {
@@ -69,6 +71,15 @@ export default function Ideas() {
             {data.ideas.length} {data.ideas.length === 1 ? 'galaxy' : 'galaxies'} mapped
           </p>
         </div>
+        <button 
+          onClick={() => {
+            setGenSourceIds([]);
+            setIsGenModalOpen(true);
+          }}
+          className="btn-primary flex items-center gap-2 w-fit"
+        >
+          <Plus className="w-4 h-4" /> Generate Idea
+        </button>
       </div>
 
       <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -100,10 +111,10 @@ export default function Ideas() {
       <Modal 
         isOpen={isGenModalOpen} 
         onClose={() => setIsGenModalOpen(false)}
-        title="Generate Idea"
+        title="Generate Startup Idea"
       >
         <IdeaGenerationForm 
-          sourceProblemIds={sourceIds}
+          sourceProblemIds={genSourceIds}
           onCancel={() => setIsGenModalOpen(false)}
           onSubmit={handleIdeaGenerated}
         />
@@ -111,11 +122,14 @@ export default function Ideas() {
 
       <Modal
         isOpen={!!viewedIdea}
-        onClose={() => setViewedIdea(null)}
+        onClose={() => {
+          setViewedIdea(null);
+          setIsConfirmingDelete(false);
+        }}
         title="Opportunity Details"
       >
         {viewedIdea && (
-          <div className="flex flex-col gap-8 pb-4">
+          <div className="flex flex-col gap-6 pb-2">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-label text-muted text-body-sm uppercase tracking-widest block mb-2">Startup Potential</span>
@@ -131,6 +145,24 @@ export default function Ideas() {
               </div>
             </div>
 
+            <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-[var(--border-glass)]">
+              <span className="text-body-sm font-medium text-muted">Validation Stage:</span>
+              <select
+                value={viewedIdea.status}
+                onChange={(e) => {
+                  const newStatus = e.target.value;
+                  updateIdea(viewedIdea.id, { status: newStatus });
+                  setViewedIdea(prev => ({ ...prev, status: newStatus }));
+                }}
+                className="bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-body-sm text-primary focus:outline-none focus:border-violet-500"
+              >
+                <option value="HIGH POTENTIAL">HIGH POTENTIAL</option>
+                <option value="VALIDATED">VALIDATED</option>
+                <option value="NEEDS DATA">NEEDS DATA</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+            </div>
+
             <div>
               <span className="text-body-sm font-medium text-muted">Solution</span>
               <p className="text-body-lg mt-1" style={{ color: 'var(--text-primary)' }}>{viewedIdea.solution}</p>
@@ -138,25 +170,97 @@ export default function Ideas() {
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <span className="text-body-sm font-medium text-muted">Customer</span>
+                <span className="text-body-sm font-medium text-muted">Customer Target</span>
                 <p className="text-body-md mt-1" style={{ color: 'var(--text-primary)' }}>{viewedIdea.customer}</p>
               </div>
               <div>
-                <span className="text-body-sm font-medium text-muted">Revenue Model</span>
+                <span className="text-body-sm font-medium text-muted">Monetization Model</span>
                 <p className="text-body-md mt-1" style={{ color: 'var(--text-primary)' }}>{viewedIdea.revenueModel}</p>
               </div>
             </div>
 
-            <div className="p-6 rounded-[10px] mt-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)' }}>
-              <span className="font-label text-muted text-[10px] uppercase tracking-widest block mb-4">Source Problems</span>
-              <ul className="flex flex-col gap-3">
-                {viewedIdea.sourceProblemIds.map(pid => {
-                  const p = data.problems.find(x => x.id === pid);
-                  return p ? (
-                    <li key={pid} className="text-body-sm" style={{ color: 'var(--text-primary)' }}>{p.problem}</li>
-                  ) : null;
-                })}
-              </ul>
+            {/* Scoring Methodology Breakdown */}
+            <div className="p-4 rounded-xl border border-violet-500/20 bg-violet-500/5">
+              <div className="flex items-center gap-2 mb-2 text-violet-400">
+                <HelpCircle className="w-4 h-4" />
+                <span className="text-caption font-label uppercase tracking-widest font-bold">Scoring Breakdown</span>
+              </div>
+              <p className="text-body-sm text-muted mb-3 leading-relaxed">
+                Evaluated via rule-based weighted opportunity algorithm:
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[12px] font-mono">
+                <div className="p-2 rounded bg-black/30 border border-white/5">
+                  <div className="text-muted text-[10px] uppercase">Pain Weight</div>
+                  <div className="text-emerald-400 font-bold mt-1">30%</div>
+                </div>
+                <div className="p-2 rounded bg-black/30 border border-white/5">
+                  <div className="text-muted text-[10px] uppercase">Demand/WTP</div>
+                  <div className="text-cyan-400 font-bold mt-1">40%</div>
+                </div>
+                <div className="p-2 rounded bg-black/30 border border-white/5">
+                  <div className="text-muted text-[10px] uppercase">Builder Fit</div>
+                  <div className="text-amber-400 font-bold mt-1">20%</div>
+                </div>
+                <div className="p-2 rounded bg-black/30 border border-white/5">
+                  <div className="text-muted text-[10px] uppercase">Frequency</div>
+                  <div className="text-purple-400 font-bold mt-1">10%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Source Problems */}
+            {viewedIdea.sourceProblemIds?.length > 0 && (
+              <div className="p-4 rounded-[10px]" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)' }}>
+                <span className="font-label text-muted text-[10px] uppercase tracking-widest block mb-2">Linked Problems</span>
+                <ul className="flex flex-col gap-2">
+                  {viewedIdea.sourceProblemIds.map(pid => {
+                    const p = data.problems.find(x => x.id === pid);
+                    return p ? (
+                      <li key={pid} className="text-body-sm flex items-center justify-between" style={{ color: 'var(--text-primary)' }}>
+                        <span className="truncate">{p.problem}</span>
+                        <span className="text-muted text-xs font-mono">Pain {p.painLevel}/10</span>
+                      </li>
+                    ) : null;
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {/* Actions & Delete Confirmation */}
+            <div className="pt-4 border-t border-[var(--border-glass)] flex items-center justify-between">
+              {isConfirmingDelete ? (
+                <div className="flex items-center gap-3 w-full justify-between">
+                  <span className="text-body-sm text-red-400">Delete this opportunity?</span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsConfirmingDelete(false)}
+                      className="px-3 py-1.5 rounded-lg text-body-sm text-muted hover:text-primary transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        deleteIdea(viewedIdea.id);
+                        setViewedIdea(null);
+                        setIsConfirmingDelete(false);
+                      }}
+                      className="px-4 py-1.5 rounded-lg text-body-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-colors"
+                    >
+                      Confirm Delete
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingDelete(true)}
+                  className="flex items-center gap-2 text-body-sm text-muted hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" /> Delete Opportunity
+                </button>
+              )}
             </div>
           </div>
         )}
