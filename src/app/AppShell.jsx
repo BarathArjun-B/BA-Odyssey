@@ -1,16 +1,18 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, BookOpen, Compass, Lightbulb, 
+  LayoutDashboard, BookOpen, FileText, Compass, Lightbulb, 
   Grid, CalendarDays, TrendingUp, SquareCheck, 
-  Settings, Info, Plus, Moon, Sun, Laptop, GraduationCap
+  Settings, Info, Plus, Moon, Sun, Laptop, GraduationCap, LogOut
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { CosmicBackground, MoonElement } from '../components/cosmic';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/journal', label: 'Journal', icon: BookOpen },
+  { path: '/notes', label: 'Notes', icon: FileText },
   { path: '/discover', label: 'Discover', icon: Compass },
   { path: '/ideas', label: 'Ideas', icon: Lightbulb },
   { path: '/matrix', label: 'Matrix', icon: Grid },
@@ -27,6 +29,7 @@ const SECONDARY_NAV = [
 
 export default function AppShell() {
   const { theme, setTheme } = useTheme();
+  const { logout, isDevBypass } = useAuth();
 
   const navigate = useNavigate();
 
@@ -115,6 +118,27 @@ export default function AppShell() {
             >
               <Plus className="w-4 h-4" />
               Log problem
+            </button>
+            {isDevBypass && (
+              <span 
+                className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono tracking-wider border"
+                style={{ 
+                  background: 'rgba(139, 92, 246, 0.12)', 
+                  borderColor: 'rgba(139, 92, 246, 0.3)',
+                  color: 'var(--accent-secondary)' 
+                }}
+                title="Local Development Bypass Active"
+              >
+                DEV BYPASS
+              </span>
+            )}
+            <button 
+              onClick={logout}
+              className="p-2 text-muted hover:text-red-400 transition-colors rounded-full"
+              style={{ background: 'rgba(255,255,255,0.04)' }}
+              title={isDevBypass ? "Reset Dev Session" : "Logout"}
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </header>
