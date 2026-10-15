@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { User, IUser } from '../models/User';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { config } from '../config/env';
 
-const signToken = (id: string, secret: string, expiresIn: string) => {
-  return jwt.sign({ id }, secret, { expiresIn: expiresIn as any });
+const signToken = (id: string, secret: string, expiresIn: string | number) => {
+  return jwt.sign({ id }, secret, { expiresIn: expiresIn as SignOptions['expiresIn'] });
 };
 
 const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
