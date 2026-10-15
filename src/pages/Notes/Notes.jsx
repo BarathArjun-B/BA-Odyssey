@@ -9,8 +9,10 @@ import TagInput from '../../components/TagInput';
 import TagPill from '../../components/TagPill';
 import EmptyState from '../../components/EmptyState';
 import { cn } from '../../lib/utils';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Notes() {
+  const { checkAuth } = useAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,6 +58,17 @@ export default function Notes() {
       setLoading(false);
     }
   }, [searchTerm, selectedTag, pinnedOnly]);
+
+  const handleRetry = useCallback(async () => {
+    try {
+      if (checkAuth) {
+        await checkAuth();
+      }
+    } catch {
+      // Proceed to fetchNotes regardless
+    }
+    fetchNotes();
+  }, [checkAuth, fetchNotes]);
 
   // Initial load and filter query effect
   useEffect(() => {
@@ -388,7 +401,7 @@ export default function Notes() {
             <span>{error}</span>
           </div>
           <button 
-            onClick={fetchNotes} 
+            onClick={handleRetry}
             className="px-3 py-1 rounded bg-red-900/50 hover:bg-red-800 text-xs font-medium transition-colors"
           >
             Retry

@@ -13,11 +13,13 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
   const accessToken = signToken(user._id.toString(), config.jwt.secret, config.jwt.expiresIn);
   const refreshToken = signToken(user._id.toString(), config.jwt.refreshSecret, config.jwt.refreshExpiresIn);
 
+  const isProduction = config.nodeEnv === 'production';
+
   const cookieOptions = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
-    secure: config.nodeEnv === 'production',
-    sameSite: 'strict' as const,
+    secure: isProduction,
+    sameSite: isProduction ? ('none' as const) : ('lax' as const),
   };
 
   res.cookie('refreshToken', refreshToken, cookieOptions);
@@ -83,9 +85,13 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const isProduction = config.nodeEnv === 'production';
+
   res.cookie('refreshToken', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ('none' as const) : ('lax' as const),
   });
 
   res.status(200).json({

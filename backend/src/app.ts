@@ -12,12 +12,35 @@ import { setupSwagger } from './docs/swagger';
 const app = express();
 
 // Security Middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+const localDevOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174',
+];
+
+const configuredClientOrigins = (config.clientUrl || '')
+  .split(',')
+  .map((url) => url.trim())
+  .filter(Boolean);
+
+const trustedOrigins = [...new Set([...configuredClientOrigins, ...localDevOrigins])];
+
 app.use(cors({
-  origin: [config.clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (trustedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Parsers
@@ -33,8 +56,10 @@ if (config.nodeEnv === 'development') {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/notes', notesRoutes);
 
-// Swagger
-setupSwagger(app);
+// Swagger (Disabled in production)
+if (config.nodeEnv !== 'production') {
+  setupSwagger(app);
+}
 
 // Healthcheck
 app.get('/health', (req: Request, res: Response) => {

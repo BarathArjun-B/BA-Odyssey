@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -20,8 +20,11 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(isDevBypass ? DEV_USER : null);
   const [loading, setLoading] = useState(true);
+  const isCheckingRef = useRef(false);
 
   const checkAuth = async () => {
+    if (isCheckingRef.current) return;
+    isCheckingRef.current = true;
     try {
       const { data } = await api.get('/auth/me');
       setUser(data.data.user);
@@ -62,6 +65,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
       }
     } finally {
+      isCheckingRef.current = false;
       setLoading(false);
     }
   };
@@ -122,7 +126,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isDevBypass }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isDevBypass, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

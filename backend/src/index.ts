@@ -5,8 +5,9 @@ import { connectDB } from './database/connection';
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(config.port, () => {
-      console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
+    const port = Number(config.port) || 5005;
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${port} (0.0.0.0)`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
